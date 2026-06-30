@@ -43,8 +43,8 @@ func CurrentManifest() Manifest {
 			},
 			{
 				Name:   "poksho",
-				Status: "deferred",
-				Notes:  "Proof transcript verification port planned with upstream vector tests.",
+				Status: "vector-checked",
+				Notes:  "Proof transcript verification API covered by deterministic compatibility vectors.",
 			},
 			{
 				Name:   "keytrans",
