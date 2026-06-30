@@ -9,7 +9,10 @@ release:
     name: encrypted-spaces-go
 
 archives:
-  - formats: [tar.gz]
+  - id: source
+    meta: true
+    name_template: "{{ .ProjectName }}_{{ .Version }}_source"
+    formats: [tar.gz]
     files:
       - LICENSE
       - README.md

@@ -1,6 +1,10 @@
 package upstream
 
-import "testing"
+import (
+	"strings"
+	"testing"
+	"time"
+)
 
 func TestManifestPinsLibsignalRelease(t *testing.T) {
 	manifest := CurrentManifest()
@@ -8,11 +12,11 @@ func TestManifestPinsLibsignalRelease(t *testing.T) {
 	if manifest.SourceRepo != "signalapp/libsignal" {
 		t.Fatalf("SourceRepo = %q, want signalapp/libsignal", manifest.SourceRepo)
 	}
-	if manifest.SourceTag != "v0.96.4" {
-		t.Fatalf("SourceTag = %q, want v0.96.4", manifest.SourceTag)
+	if !strings.HasPrefix(manifest.SourceTag, "v") {
+		t.Fatalf("SourceTag = %q, want v-prefixed release tag", manifest.SourceTag)
 	}
-	if manifest.PublishedAt != "2026-06-25T21:34:59Z" {
-		t.Fatalf("PublishedAt = %q, want upstream release timestamp", manifest.PublishedAt)
+	if _, err := time.Parse(time.RFC3339, manifest.PublishedAt); err != nil {
+		t.Fatalf("PublishedAt = %q, want RFC3339 timestamp: %v", manifest.PublishedAt, err)
 	}
 	if manifest.Compatibility != "wire-compatible-source" {
 		t.Fatalf("Compatibility = %q, want wire-compatible-source", manifest.Compatibility)

@@ -38,8 +38,12 @@ jobs:
           text = re.sub(r'PublishedAt:\s+"[^"]+"', f'PublishedAt: "{published_at}"', text)
           path.write_text(text)
           PY
-      - run: go test ./internal/upstream -count=1
+      - name: Test updated manifest
+        id: compat
+        continue-on-error: true
+        run: go test ./internal/upstream -count=1
       - uses: peter-evans/create-pull-request@v8
+        if: always()
         with:
           branch: chore/update-libsignal-upstream-pin
           commit-message: "chore: update libsignal upstream pin"
@@ -50,3 +54,6 @@ jobs:
             This PR only updates the recorded upstream release pin. Failing tests
             indicate compatibility work is needed before merging.
           labels: upstream-drift, automated
+      - name: Fail when compatibility tests fail
+        if: steps.compat.outcome == 'failure'
+        run: exit 1
