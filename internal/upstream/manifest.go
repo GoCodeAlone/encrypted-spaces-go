@@ -48,8 +48,8 @@ func CurrentManifest() Manifest {
 			},
 			{
 				Name:   "keytrans",
-				Status: "deferred",
-				Notes:  "Key transparency checkpoint verifier planned with upstream vector tests.",
+				Status: "vector-checked",
+				Notes:  "Key transparency checkpoint verification API covered by deterministic compatibility vectors.",
 			},
 		},
 	}
