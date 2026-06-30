@@ -42,8 +42,8 @@ jobs:
       - uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/update-libsignal-upstream-pin
-          commit-message: chore: update libsignal upstream pin
-          title: chore: update libsignal upstream pin
+          commit-message: "chore: update libsignal upstream pin"
+          title: "chore: update libsignal upstream pin"
           body: |
             Automated weekly drift check for signalapp/libsignal release compatibility.
 
