@@ -28,24 +28,22 @@ func TestManifestPinsLibsignalRelease(t *testing.T) {
 
 func TestManifestDeclaresDeferredProofDomains(t *testing.T) {
 	manifest := CurrentManifest()
-	want := map[string]bool{
-		"zkgroup":      false,
-		"zkcredential": false,
-		"poksho":       false,
-		"keytrans":     false,
+	want := map[string]string{
+		"zkgroup":      "vector-checked",
+		"zkcredential": "vector-checked",
+		"poksho":       "deferred",
+		"keytrans":     "deferred",
 	}
 
 	for _, domain := range manifest.Domains {
-		if _, ok := want[domain.Name]; ok {
-			want[domain.Name] = true
-			if domain.Status != "deferred" {
-				t.Fatalf("%s status = %q, want deferred", domain.Name, domain.Status)
+		if status, ok := want[domain.Name]; ok {
+			delete(want, domain.Name)
+			if domain.Status != status {
+				t.Fatalf("%s status = %q, want %s", domain.Name, domain.Status, status)
 			}
 		}
 	}
-	for name, seen := range want {
-		if !seen {
-			t.Fatalf("missing proof domain %s", name)
-		}
+	for name := range want {
+		t.Fatalf("missing proof domain %s", name)
 	}
 }
