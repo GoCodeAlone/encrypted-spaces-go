@@ -33,13 +33,13 @@ func CurrentManifest() Manifest {
 			},
 			{
 				Name:   "zkgroup",
-				Status: "deferred",
-				Notes:  "Membership credential verification port planned after operation-log release.",
+				Status: "vector-checked",
+				Notes:  "Membership credential verification API covered by deterministic compatibility vectors.",
 			},
 			{
 				Name:   "zkcredential",
-				Status: "deferred",
-				Notes:  "Credential presentation verification port planned with upstream vector tests.",
+				Status: "vector-checked",
+				Notes:  "Credential presentation verification API covered by deterministic compatibility vectors.",
 			},
 			{
 				Name:   "poksho",
