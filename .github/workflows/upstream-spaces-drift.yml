@@ -1,0 +1,59 @@
+name: upstream spaces drift
+
+on:
+  schedule:
+    - cron: '17 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.26.4'
+          cache: true
+      - name: Update upstream manifest pin
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          latest="$(gh release view -R signalapp/libsignal --json tagName,publishedAt)"
+          tag="$(jq -r '.tagName' <<<"$latest")"
+          published_at="$(jq -r '.publishedAt' <<<"$latest")"
+          python3 - "$tag" "$published_at" <<'PY'
+          import pathlib
+          import re
+          import sys
+
+          tag, published_at = sys.argv[1:3]
+          path = pathlib.Path("internal/upstream/manifest.go")
+          text = path.read_text()
+          text = re.sub(r'SourceTag:\s+"[^"]+"', f'SourceTag: "{tag}"', text)
+          text = re.sub(r'PublishedAt:\s+"[^"]+"', f'PublishedAt: "{published_at}"', text)
+          path.write_text(text)
+          PY
+      - name: Test updated manifest
+        id: compat
+        continue-on-error: true
+        run: go test ./internal/upstream -count=1
+      - uses: peter-evans/create-pull-request@v8
+        if: always()
+        with:
+          branch: chore/update-libsignal-upstream-pin
+          commit-message: "chore: update libsignal upstream pin"
+          title: "chore: update libsignal upstream pin"
+          body: |
+            Automated weekly drift check for signalapp/libsignal release compatibility.
+
+            This PR only updates the recorded upstream release pin. Failing tests
+            indicate compatibility work is needed before merging.
+          labels: upstream-drift, automated
+      - name: Fail when compatibility tests fail
+        if: steps.compat.outcome == 'failure'
+        run: exit 1

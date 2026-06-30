@@ -1,0 +1,19 @@
+version: 2
+
+builds:
+  - skip: true
+
+release:
+  github:
+    owner: GoCodeAlone
+    name: encrypted-spaces-go
+
+archives:
+  - id: source
+    meta: true
+    name_template: "{{ .ProjectName }}_{{ .Version }}_source"
+    formats: [tar.gz]
+    files:
+      - LICENSE
+      - README.md
+      - internal/upstream/manifest.go
