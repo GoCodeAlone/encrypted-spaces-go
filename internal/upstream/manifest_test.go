@@ -32,7 +32,7 @@ func TestManifestDeclaresDeferredProofDomains(t *testing.T) {
 		"zkgroup":      "vector-checked",
 		"zkcredential": "vector-checked",
 		"poksho":       "vector-checked",
-		"keytrans":     "deferred",
+		"keytrans":     "vector-checked",
 	}
 
 	for _, domain := range manifest.Domains {
