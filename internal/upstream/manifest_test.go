@@ -31,7 +31,7 @@ func TestManifestDeclaresDeferredProofDomains(t *testing.T) {
 	want := map[string]string{
 		"zkgroup":      "vector-checked",
 		"zkcredential": "vector-checked",
-		"poksho":       "deferred",
+		"poksho":       "vector-checked",
 		"keytrans":     "deferred",
 	}
 
