@@ -9,11 +9,12 @@ type ProofCoverage struct {
 }
 
 type ProofCoverageRow struct {
-	Domain string
-	Status string
-	Vector string
-	Reason string
-	Notes  string
+	Domain            string
+	Status            string
+	Vector            string
+	Reason            string
+	NextUpstreamInput string
+	Notes             string
 }
 
 func ProofCoverageReport() ProofCoverage {
@@ -25,11 +26,12 @@ func ProofCoverageReport() ProofCoverage {
 	}
 	for _, domain := range manifest.Domains {
 		row := ProofCoverageRow{
-			Domain: domain.Name,
-			Status: domain.Status,
-			Vector: domain.Vector,
-			Reason: domain.Reason,
-			Notes:  domain.Notes,
+			Domain:            domain.Name,
+			Status:            domain.Status,
+			Vector:            domain.Vector,
+			Reason:            domain.Reason,
+			NextUpstreamInput: domain.NextUpstreamInput,
+			Notes:             domain.Notes,
 		}
 		if domain.Status != "vector-backed" {
 			report.ProductionEquivalent = false
