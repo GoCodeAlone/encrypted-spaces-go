@@ -29,7 +29,12 @@ accepting untrusted space operations.
   operations.
 - `epochs`: key epoch rotation and membership epoch updates used to reject
   removed members before appending operations.
+- `proof`: vector-backed proof policy adapters for membership credentials,
+  operation commitments, key-transparency checkpoint freshness, and redacted
+  proof evidence serialization.
 - `verification`: fake/no-proof verification reports for Workflow composition
-  tests. Reports from this package always set `ProductionReady` to `false`.
+  tests plus coverage reports for vector-backed and deferred proof domains.
+  Fake reports always set `ProductionReady` to `false`; message-backup and
+  SVR/SVRB remain deferred until stable upstream proof vectors are carried.
 - `internal/upstream`: upstream release and vector coverage manifest used by
   drift checks and downstream Workflow plugins.

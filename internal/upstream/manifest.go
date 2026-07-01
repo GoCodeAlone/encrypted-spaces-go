@@ -13,11 +13,12 @@ type Manifest struct {
 // Domain records one upstream proof or wire-compatibility area and its local
 // implementation status.
 type Domain struct {
-	Name   string
-	Status string
-	Vector string
-	Reason string
-	Notes  string
+	Name              string
+	Status            string
+	Vector            string
+	Reason            string
+	NextUpstreamInput string
+	Notes             string
 }
 
 // CurrentManifest returns the pinned upstream source for this module.
@@ -58,16 +59,18 @@ func CurrentManifest() Manifest {
 				Notes:  "Key transparency checkpoint verification API covered by deterministic compatibility vectors.",
 			},
 			{
-				Name:   "message-backup",
-				Status: "deferred",
-				Reason: "Message-backup proof vectors require the backup/SVR proof boundary planned for the next phase.",
-				Notes:  "No production-equivalence claim is made for message-backup proofs in this release.",
+				Name:              "message-backup",
+				Status:            "deferred",
+				Reason:            "Message-backup proof vectors require the backup/SVR proof boundary planned for the next phase.",
+				NextUpstreamInput: "Stable upstream message-backup proof vectors and backup manifest schemas.",
+				Notes:             "No production-equivalence claim is made for message-backup proofs in this release.",
 			},
 			{
-				Name:   "svr-svrb",
-				Status: "deferred",
-				Reason: "SVR/SVRB proof vectors require upstream proof-system fixtures not yet carried in this module.",
-				Notes:  "Coverage is reported as deferred instead of vector-backed.",
+				Name:              "svr-svrb",
+				Status:            "deferred",
+				Reason:            "SVR/SVRB proof vectors require upstream proof-system fixtures not yet carried in this module.",
+				NextUpstreamInput: "Stable upstream SVR/SVRB proof fixtures and service transcript inputs.",
+				Notes:             "Coverage is reported as deferred instead of vector-backed.",
 			},
 		},
 	}
