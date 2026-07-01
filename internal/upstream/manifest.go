@@ -15,6 +15,8 @@ type Manifest struct {
 type Domain struct {
 	Name   string
 	Status string
+	Vector string
+	Reason string
 	Notes  string
 }
 
@@ -33,23 +35,39 @@ func CurrentManifest() Manifest {
 			},
 			{
 				Name:   "zkgroup",
-				Status: "vector-checked",
+				Status: "vector-backed",
+				Vector: "testdata/upstream-vectors/zkgroup-membership.json",
 				Notes:  "Membership credential verification API covered by deterministic compatibility vectors.",
 			},
 			{
 				Name:   "zkcredential",
-				Status: "vector-checked",
+				Status: "vector-backed",
+				Vector: "testdata/upstream-vectors/zkcredential-presentation.json",
 				Notes:  "Credential presentation verification API covered by deterministic compatibility vectors.",
 			},
 			{
 				Name:   "poksho",
-				Status: "vector-checked",
+				Status: "vector-backed",
+				Vector: "testdata/upstream-vectors/poksho-transcript.json",
 				Notes:  "Proof transcript verification API covered by deterministic compatibility vectors.",
 			},
 			{
 				Name:   "keytrans",
-				Status: "vector-checked",
+				Status: "vector-backed",
+				Vector: "testdata/upstream-vectors/keytrans-checkpoint.json",
 				Notes:  "Key transparency checkpoint verification API covered by deterministic compatibility vectors.",
+			},
+			{
+				Name:   "message-backup",
+				Status: "deferred",
+				Reason: "Message-backup proof vectors require the backup/SVR proof boundary planned for the next phase.",
+				Notes:  "No production-equivalence claim is made for message-backup proofs in this release.",
+			},
+			{
+				Name:   "svr-svrb",
+				Status: "deferred",
+				Reason: "SVR/SVRB proof vectors require upstream proof-system fixtures not yet carried in this module.",
+				Notes:  "Coverage is reported as deferred instead of vector-backed.",
 			},
 		},
 	}
