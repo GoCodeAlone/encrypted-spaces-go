@@ -13,6 +13,11 @@ Initial releases are intentionally staged:
 - `v0.2.0`: upstream vector-tested proof verification ports for membership,
   proof transcript, and key transparency domains.
 
+The upstream vector manifest records `zkgroup`, `zkcredential`, `poksho`, and
+`keytrans` as vector-backed against `signalapp/libsignal` `v0.96.4`. Message
+backup and SVR/SVRB proof semantics are explicitly deferred until their proof
+fixtures and package boundaries are implemented.
+
 Fake/no-proof verification is not production-ready. Production callers should
 require structured proof reports from the vector-tested proof ports before
 accepting untrusted space operations.
@@ -26,3 +31,5 @@ accepting untrusted space operations.
   removed members before appending operations.
 - `verification`: fake/no-proof verification reports for Workflow composition
   tests. Reports from this package always set `ProductionReady` to `false`.
+- `internal/upstream`: upstream release and vector coverage manifest used by
+  drift checks and downstream Workflow plugins.

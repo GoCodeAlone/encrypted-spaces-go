@@ -1,6 +1,8 @@
 package upstream
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -29,10 +31,10 @@ func TestManifestPinsLibsignalRelease(t *testing.T) {
 func TestManifestDeclaresDeferredProofDomains(t *testing.T) {
 	manifest := CurrentManifest()
 	want := map[string]string{
-		"zkgroup":      "vector-checked",
-		"zkcredential": "vector-checked",
-		"poksho":       "vector-checked",
-		"keytrans":     "vector-checked",
+		"zkgroup":      "vector-backed",
+		"zkcredential": "vector-backed",
+		"poksho":       "vector-backed",
+		"keytrans":     "vector-backed",
 	}
 
 	for _, domain := range manifest.Domains {
@@ -41,9 +43,40 @@ func TestManifestDeclaresDeferredProofDomains(t *testing.T) {
 			if domain.Status != status {
 				t.Fatalf("%s status = %q, want %s", domain.Name, domain.Status, status)
 			}
+			if domain.Vector == "" {
+				t.Fatalf("%s missing vector path", domain.Name)
+			}
+			if _, err := os.Stat(filepath.Join("..", "..", domain.Vector)); err != nil {
+				t.Fatalf("%s vector %q is not readable: %v", domain.Name, domain.Vector, err)
+			}
 		}
 	}
 	for name := range want {
 		t.Fatalf("missing proof domain %s", name)
+	}
+}
+
+func TestManifestRecordsDeferredProofGaps(t *testing.T) {
+	manifest := CurrentManifest()
+	want := map[string]bool{
+		"message-backup": false,
+		"svr-svrb":       false,
+	}
+	for _, domain := range manifest.Domains {
+		if _, ok := want[domain.Name]; !ok {
+			continue
+		}
+		want[domain.Name] = true
+		if domain.Status != "deferred" {
+			t.Fatalf("%s status = %q, want deferred", domain.Name, domain.Status)
+		}
+		if domain.Reason == "" {
+			t.Fatalf("%s missing deferred reason", domain.Name)
+		}
+	}
+	for name, seen := range want {
+		if !seen {
+			t.Fatalf("missing deferred domain %s", name)
+		}
 	}
 }

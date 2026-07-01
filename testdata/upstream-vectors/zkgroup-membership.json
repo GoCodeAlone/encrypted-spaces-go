@@ -1,0 +1,14 @@
+{
+  "domain": "zkgroup",
+  "upstream_tag": "v0.96.4",
+  "source": "java/shared/java/org/signal/libsignal/zkgroup/groups",
+  "cases": [
+    {
+      "group_id": "space-1",
+      "member_id": "member-1",
+      "issuer": "issuer-1",
+      "expires_at": 1893456000,
+      "proof_digest": "sha256:2f99cb90ee710be078aaf1b8cb9a22942c10f5965e5e39c1607a930fd6df7874"
+    }
+  ]
+}

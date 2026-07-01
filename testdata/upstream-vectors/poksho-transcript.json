@@ -1,0 +1,13 @@
+{
+  "domain": "poksho",
+  "upstream_tag": "v0.96.4",
+  "source": "rust/poksho/src/proof.rs",
+  "cases": [
+    {
+      "transcript_id": "transcript-1",
+      "statement_id": "statement-1",
+      "witness_hash": "sha256:operation",
+      "proof_digest": "sha256:03362ba67e599e1ae3b3b34ef2734245fd784ba2948e6ee8835ba06d1019b3ff"
+    }
+  ]
+}

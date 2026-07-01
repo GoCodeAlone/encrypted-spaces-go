@@ -1,0 +1,13 @@
+{
+  "domain": "keytrans",
+  "upstream_tag": "v0.96.4",
+  "source": "rust/keytrans/src/verify.rs",
+  "cases": [
+    {
+      "checkpoint_id": "checkpoint-1",
+      "tree_head": "tree-head-1",
+      "tree_size": 42,
+      "proof_digest": "sha256:479338417f33b12df048fbe2180f58638636b2618d90ac6f807ed436ff881d8c"
+    }
+  ]
+}
