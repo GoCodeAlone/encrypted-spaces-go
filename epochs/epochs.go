@@ -3,7 +3,6 @@ package epochs
 import (
 	"errors"
 	"fmt"
-	"maps"
 	"slices"
 	"sync"
 
@@ -172,12 +171,22 @@ func (s *SpaceState) MembershipEpoch() operationlog.MembershipEpoch {
 
 func (s *SpaceState) Snapshot() SpaceSnapshot {
 	s.mu.Lock()
-	defer s.mu.Unlock()
-	return SpaceSnapshot{
+	snapshot := SpaceSnapshot{
 		SpaceID:         s.spaceID,
 		KeyEpoch:        s.keyEpoch,
 		MembershipEpoch: s.membershipEpoch,
-		Members:         slices.Sorted(maps.Keys(s.members)),
-		RemovedMembers:  slices.Sorted(maps.Keys(s.removed)),
+		Members:         make([]operationlog.MemberID, 0, len(s.members)),
+		RemovedMembers:  make([]operationlog.MemberID, 0, len(s.removed)),
 	}
+	for member := range s.members {
+		snapshot.Members = append(snapshot.Members, member)
+	}
+	for member := range s.removed {
+		snapshot.RemovedMembers = append(snapshot.RemovedMembers, member)
+	}
+	s.mu.Unlock()
+
+	slices.Sort(snapshot.Members)
+	slices.Sort(snapshot.RemovedMembers)
+	return snapshot
 }
