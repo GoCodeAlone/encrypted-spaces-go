@@ -2,6 +2,8 @@ package epochs
 
 import (
 	"errors"
+	"fmt"
+	"slices"
 	"sync"
 
 	"github.com/GoCodeAlone/encrypted-spaces-go/operationlog"
@@ -20,12 +22,21 @@ var (
 	ErrMemberRemoved       = errors.New("member removed")
 	ErrUnknownMemberAction = errors.New("unknown member action")
 	ErrSpaceMismatch       = errors.New("space mismatch")
+	ErrInvalidSnapshot     = errors.New("invalid space snapshot")
 )
 
 type MemberUpdate struct {
 	MemberID operationlog.MemberID
 	Action   MemberAction
 	Reason   string
+}
+
+type SpaceSnapshot struct {
+	SpaceID         operationlog.SpaceID
+	KeyEpoch        operationlog.KeyEpoch
+	MembershipEpoch operationlog.MembershipEpoch
+	Members         []operationlog.MemberID
+	RemovedMembers  []operationlog.MemberID
 }
 
 type SpaceState struct {
@@ -49,6 +60,47 @@ func NewSpaceState(spaceID operationlog.SpaceID, members []operationlog.MemberID
 		state.members[member] = true
 	}
 	return state
+}
+
+func NewSpaceStateFromSnapshot(snapshot SpaceSnapshot) (*SpaceState, error) {
+	if snapshot.SpaceID == "" {
+		return nil, fmt.Errorf("%w: space id is required", ErrInvalidSnapshot)
+	}
+	if snapshot.KeyEpoch < 1 {
+		return nil, fmt.Errorf("%w: key epoch must be at least 1", ErrInvalidSnapshot)
+	}
+	if snapshot.MembershipEpoch < 1 {
+		return nil, fmt.Errorf("%w: membership epoch must be at least 1", ErrInvalidSnapshot)
+	}
+	state := &SpaceState{
+		spaceID:         snapshot.SpaceID,
+		keyEpoch:        snapshot.KeyEpoch,
+		membershipEpoch: snapshot.MembershipEpoch,
+		members:         make(map[operationlog.MemberID]bool, len(snapshot.Members)),
+		removed:         make(map[operationlog.MemberID]bool, len(snapshot.RemovedMembers)),
+	}
+	for _, member := range snapshot.Members {
+		if member == "" {
+			return nil, fmt.Errorf("%w: active member id is required", ErrInvalidSnapshot)
+		}
+		if state.members[member] {
+			return nil, fmt.Errorf("%w: duplicate active member %q", ErrInvalidSnapshot, member)
+		}
+		state.members[member] = true
+	}
+	for _, member := range snapshot.RemovedMembers {
+		if member == "" {
+			return nil, fmt.Errorf("%w: removed member id is required", ErrInvalidSnapshot)
+		}
+		if state.members[member] {
+			return nil, fmt.Errorf("%w: member %q is both active and removed", ErrInvalidSnapshot, member)
+		}
+		if state.removed[member] {
+			return nil, fmt.Errorf("%w: duplicate removed member %q", ErrInvalidSnapshot, member)
+		}
+		state.removed[member] = true
+	}
+	return state, nil
 }
 
 func (s *SpaceState) RotateKeyEpoch(reason string) operationlog.KeyEpoch {
@@ -115,4 +167,26 @@ func (s *SpaceState) MembershipEpoch() operationlog.MembershipEpoch {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	return s.membershipEpoch
+}
+
+func (s *SpaceState) Snapshot() SpaceSnapshot {
+	s.mu.Lock()
+	snapshot := SpaceSnapshot{
+		SpaceID:         s.spaceID,
+		KeyEpoch:        s.keyEpoch,
+		MembershipEpoch: s.membershipEpoch,
+		Members:         make([]operationlog.MemberID, 0, len(s.members)),
+		RemovedMembers:  make([]operationlog.MemberID, 0, len(s.removed)),
+	}
+	for member := range s.members {
+		snapshot.Members = append(snapshot.Members, member)
+	}
+	for member := range s.removed {
+		snapshot.RemovedMembers = append(snapshot.RemovedMembers, member)
+	}
+	s.mu.Unlock()
+
+	slices.Sort(snapshot.Members)
+	slices.Sort(snapshot.RemovedMembers)
+	return snapshot
 }
