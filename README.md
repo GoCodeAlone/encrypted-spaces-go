@@ -16,6 +16,11 @@ Initial releases are intentionally staged:
   Workflow plugins.
 - `v0.4.0`: proof policy and evidence APIs over the vector-backed membership,
   operation commitment, and key-transparency checkpoint surfaces.
+- `v0.5.0`: state snapshot primitives for Workflow-owned Encrypted Spaces
+  lifecycle proofs.
+- `v0.6.0`: opaque private membership credential and presentation helpers for
+  Workflow admission/revocation proofs without plaintext member IDs in stored
+  credential artifacts.
 
 The upstream vector manifest records `zkgroup`, `zkcredential`, `poksho`, and
 `keytrans` as vector-backed against `signalapp/libsignal` `v0.96.4`. Message
@@ -25,6 +30,14 @@ fixtures and package boundaries are implemented.
 Fake/no-proof verification is not production-ready. Production callers should
 require structured proof reports from the vector-tested proof ports before
 accepting untrusted space operations.
+
+The `zkgroup` private membership credential helpers are a local Workflow proof
+subset. They use domain-separated HMAC credentials and presentations to hide
+plaintext member IDs from stored artifacts and to bind admission to an audience,
+operation, epoch, expiry, and revocation list. They are not a full official
+Signal `zkgroup` zero-knowledge implementation; reports expose that
+non-equivalence so downstream plugins do not mistake the local subset for
+upstream group credential parity.
 
 This module is an offline proof and operation-log compatibility library. It
 does not register Signal accounts, link devices, send or receive Signal
@@ -56,6 +69,8 @@ production-equivalence claim can be made.
   operations.
 - `epochs`: key epoch rotation and membership epoch updates used to reject
   removed members before appending operations.
+- `zkgroup`: vector-backed membership credential checks plus local opaque
+  private membership credential helpers for Workflow scenario proofs.
 - `proof`: vector-backed proof policy adapters for membership credentials,
   operation commitments, key-transparency checkpoint freshness, and redacted
   proof evidence serialization.
