@@ -25,8 +25,8 @@ type Domain struct {
 func CurrentManifest() Manifest {
 	return Manifest{
 		SourceRepo:    "signalapp/libsignal",
-		SourceTag: "v0.97.2",
-		PublishedAt: "2026-07-11T02:22:12Z",
+		SourceTag: "v0.106.1",
+		PublishedAt: "2026-10-28T00:09:30Z",
 		Compatibility: "wire-compatible-source",
 		Domains: []Domain{
 			{
